@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option csharp_namespace = "grpc_server";
+
+package demo;
+
+// The DemoService demonstrates all gRPC call patterns.
+service Demo {
+  // Unary
+  rpc GetUserInfo (UserRequest) returns (UserResponse);
+
+  // Server streaming
+  rpc StreamUserNotifications (UserRequest) returns (stream UserResponse);
+
+  // Client streaming
+  rpc UploadUserActivity (stream UserRequest) returns (UserResponse);
+
+  // Bi-directional streaming
+  rpc ChatWithUser (stream UserRequest) returns (stream UserResponse);
+}
+
+// Request message shared across all methods.
+message UserRequest {
+  int32 user_id = 1;                     // Unique user ID
+  string username = 2;                   // Username or display name
+  double score = 3;                      // Example numeric data
+  bool is_online = 4;                    // Example boolean status
+  repeated string roles = 5;             // User roles
+  map<string, string> attributes = 6;    // Additional user attributes
+  int64 timestamp = 7;                   // Unix timestamp for event
+}
+
+// Response message shared across all methods.
+message UserResponse {
+  int32 response_id = 1;                 // Response identifier
+  string message = 2;                    // Descriptive response text
+  double processed_score = 3;            // Computed or echoed numeric value
+  repeated string notifications = 4;     // List of results or notifications
+  map<string, string> metadata = 5;      // Metadata or debug info
+  int64 server_time = 6;                 // Server timestamp
+}

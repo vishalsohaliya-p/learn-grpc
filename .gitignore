@@ -1,0 +1,31 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+*.iml
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userossc
+*.sln.docstates
+
+# Packages
+packages/
+node_modules/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Test Results
+TestResults/
+
+# Log files
+*.log
+
+# Environment specific configuration
+appsettings.Development.json

@@ -1,0 +1,119 @@
+﻿🧩 Creating a gRPC Project (Server and Client Setup Guide)
+🖥️ 1. Create a gRPC Server Project
+
+    1. In Visual Studio, create a new project.
+
+    2. Select gRPC Service as the project type.
+
+    3. Name your project appropriately (e.g., GrpcDemoServer).
+
+📄 2. Add a .proto File
+
+    1. In Solution Explorer, right-click the Protos folder → Add → New Item.
+
+    2. Select Protocol Buffer File and give it a descriptive name, e.g. demo.proto.
+
+    3. Right-click the newly created .proto file → Properties.
+
+       - Set Build Action to Protobuf compiler.
+
+    4. Right-click the file again → gRPC Stub Classes → Server Only.
+
+       - This generates the necessary server-side gRPC classes.
+
+🧠 3. Define the Service and Messages
+
+Inside your .proto file, define:
+
+  -  A service for your gRPC methods.
+
+  -  Message types for request and response objects.
+
+Example:
+syntax = "proto3";
+
+option csharp_namespace = "GrpcDemo";
+
+service Demo {
+  rpc GetUserInfo (UserRequest) returns (UserResponse);
+}
+
+message UserRequest {
+  int32 userId = 1;
+  string username = 2;
+  double score = 3;
+  bool isOnline = 4;
+  repeated string roles = 5;
+  map<string, string> attributes = 6;
+  int64 timestamp = 7;
+}
+
+message UserResponse {
+  string message = 1;
+  double processedScore = 2;
+}
+
+📘 Reference:
+For more details on all gRPC call types (Unary, Server Streaming, Client Streaming, Bi-directional), check the official documentation:
+👉 https://learn.microsoft.com/en-us/aspnet/core/grpc/services?view=aspnetcore-9.0
+
+💻 4. Create the gRPC Client Project
+
+    1. Add a new Console App or .NET Client project to your solution (e.g., GrpcDemoClient).
+
+    2. Create a new folder named Protos.
+
+    3. Add the same .proto file from the server project (you can link or copy it).
+
+    4. Add the following NuGet packages:
+
+      -  Grpc.Tools
+
+      -  Grpc.Net.Client
+
+      -  Google.Protobuf
+
+    5. Right-click the .proto file → Properties:
+
+      -  Set Build Action to Protobuf compiler.
+
+      -  Set gRPC Stub Classes to Client Only.
+
+🔌 5. Write the Client Connection Code
+
+Example of a Unary (Request–Response) call:
+using Grpc.Net.Client;
+using GrpcDemo;
+
+// Create gRPC channel
+using var channel = GrpcChannel.ForAddress("http://localhost:5200");
+
+// Create gRPC client
+var client = new Demo.DemoClient(channel);
+
+// Create request
+var request = new UserRequest
+{
+    UserId = 1,
+    Username = "Alice",
+    Score = 95.5,
+    IsOnline = true,
+    Roles = { "Admin", "Editor" },
+    Attributes = { { "Region", "US" }, { "Device", "Desktop" } },
+    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+};
+
+// Send request and get response
+var response = await client.GetUserInfoAsync(request);
+
+// Display the result
+Console.WriteLine($"Response: {response.Message}, Score: {response.ProcessedScore}");
+
+
+✅ 6. Run and Test
+
+    1. Start the gRPC server project first.
+
+    2. Then run the client project.
+
+    3. You should see the response printed in the client console.
