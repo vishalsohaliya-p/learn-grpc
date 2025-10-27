@@ -15,7 +15,7 @@ internal partial class Program
     static async Task CallGrpc()
     {
         //Adjust your server address if needed
-        using var channel = GrpcChannel.ForAddress("http://localhost:5200");
+        using var channel = GrpcChannel.ForAddress("https://localhost:7241");
         var client = new Demo.DemoClient(channel);
 
         Console.WriteLine("=== Unary Call ===");
