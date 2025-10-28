@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+using grpc_server.Model;
+using System.Text.Json;
 
 namespace grpc_server.Interceptors;
 
@@ -28,10 +30,28 @@ public class ValidationInterceptor : Interceptor
 
             if (!result.IsValid)
             {
-                var errors = string.Join("; ", result.Errors.Select(e => e.ErrorMessage));
-                throw new RpcException(new Status(StatusCode.InvalidArgument, errors));
+                // Create structured response
+                var response = new ValidationErrorResponse
+                {
+                    Errors = result.Errors
+                        .Select(e => new ValidationError
+                        {
+                            Field = e.PropertyName,
+                            Message = e.ErrorMessage
+                        })
+                        .ToList()
+                };
+
+                var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                // Return structured error
+                throw new RpcException(new Status(StatusCode.InvalidArgument, json));
             }
         }
+
 
         // Continue with actual gRPC method
         return await continuation(request, context);

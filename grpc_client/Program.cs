@@ -1,7 +1,9 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using grpc_client;
+using grpc_client.Model;
 using Microsoft.VisualBasic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 internal partial class Program
@@ -45,8 +47,19 @@ internal partial class Program
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
 
-        var response = await client.GetUserInfoAsync(request);
-        Console.WriteLine($"Response: {response.Message}, Score: {response.ProcessedScore}");
+        try
+        {
+            var response = await client.GetUserInfoAsync(request);
+            Console.WriteLine($"Response: {response.Message}, Score: {response.ProcessedScore}");
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.InvalidArgument)
+        {
+            var errorResponse = JsonSerializer.Deserialize<ValidationErrorResponse>(ex.Status.Detail);
+            foreach (var error in errorResponse.Errors)
+            {
+                Console.WriteLine($"{error.Field}: {error.Message}");
+            }
+        }
     }
 
     // 2️⃣ Server Streaming Example
