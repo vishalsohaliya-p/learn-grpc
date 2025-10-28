@@ -9,6 +9,7 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 // Add services to the container.
 builder.Services.AddGrpc(options =>
 {
+    options.Interceptors.Add<ExceptionInterceptor>();
     options.Interceptors.Add<ValidationInterceptor>();
 });
 
