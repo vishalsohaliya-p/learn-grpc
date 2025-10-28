@@ -36,7 +36,7 @@ internal partial class Program
     {
         var request = new UserRequest
         {
-            UserId = 1,
+            UserId = 0,
             Username = "Alice",
             Score = 95.5,
             IsOnline = true,

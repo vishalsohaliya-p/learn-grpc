@@ -1,9 +1,16 @@
+using FluentValidation;
+using grpc_server.Interceptors;
 using grpc_server.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 // Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(options =>
+{
+    options.Interceptors.Add<ValidationInterceptor>();
+});
 
 var app = builder.Build();
 
